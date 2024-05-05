@@ -21,7 +21,7 @@ func TestCalculateOffset(t *testing.T) {
 		{defaultAlphabet, []uint64{1, 2, 3}, 55},
 		{defaultAlphabet, []uint64{4, 5, 6}, 2},
 	} {
-		if _, err := New(Options{Alphabet: tt.alphabet}); err != nil {
+		if _, err := New(WithAlphabet(tt.alphabet)); err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
 

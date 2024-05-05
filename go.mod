@@ -1,3 +1,3 @@
-module github.com/sqids/sqids-go
+module github.com/smallnest/sqids
 
 go 1.20

@@ -23,7 +23,7 @@ func FuzzEncode(f *testing.F) {
 	}
 
 	f.Fuzz(func(t *testing.T, u uint64) {
-		s.Encode([]uint64{u})
+		s.Encode(u)
 	})
 }
 
@@ -31,11 +31,9 @@ func FuzzNewEncodeDecode(f *testing.F) {
 	f.Add(defaultAlphabet, uint64(1))
 
 	f.Fuzz(func(t *testing.T, alphabet string, u uint64) {
-		s, err := New(Options{
-			Alphabet: alphabet,
-		})
+		s, err := New(WithAlphabet(alphabet))
 		if err == nil {
-			id, err := s.Encode([]uint64{u})
+			id, err := s.Encode(u)
 			if err == nil {
 				d := s.Decode(id)
 

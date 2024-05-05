@@ -6,9 +6,7 @@ import (
 )
 
 func TestMinLengthSimple(t *testing.T) {
-	s, err := New(Options{
-		MinLength: uint8(len(defaultAlphabet)),
-	})
+	s, err := New(WithMinLength(uint8(len(defaultAlphabet))))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -17,7 +15,7 @@ func TestMinLengthSimple(t *testing.T) {
 
 	id := "86Rf07xd4zBmiJXQG6otHEbew02c3PWsUOLZxADhCpKj7aVFv9I8RquYrNlSTM"
 
-	generatedID, err := s.Encode(numbers)
+	generatedID, err := s.Encode(numbers...)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -50,14 +48,12 @@ func TestMinLengthIncremental(t *testing.T) {
 	m[uint8(len(defaultAlphabet))+3] = "86Rf07xd4zBmiJXQG6otHEbew02c3PWsUOLZxADhCpKj7aVFv9I8RquYrNlSTMyf1"
 
 	for minLength, id := range m {
-		s, err := New(Options{
-			MinLength: minLength,
-		})
+		s, err := New(WithMinLength(minLength))
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		generatedID, err := s.Encode(numbers)
+		generatedID, err := s.Encode(numbers...)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -78,9 +74,7 @@ func TestMinLengthIncremental(t *testing.T) {
 }
 
 func TestMinLengthIncrementalNumbers(t *testing.T) {
-	s, err := New(Options{
-		MinLength: uint8(len(defaultAlphabet)),
-	})
+	s, err := New(WithMinLength(uint8(len(defaultAlphabet))))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -99,7 +93,7 @@ func TestMinLengthIncrementalNumbers(t *testing.T) {
 	}
 
 	for id, numbers := range ids {
-		generatedID, err := s.Encode(numbers)
+		generatedID, err := s.Encode(numbers...)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -126,14 +120,12 @@ func TestMinLengths(t *testing.T) {
 			{1000000},
 			{maxUint64Value},
 		} {
-			s, err := New(Options{
-				MinLength: minLength,
-			})
+			s, err := New(WithMinLength(minLength))
 			if err != nil {
 				t.Fatal(err)
 			}
 
-			generatedID, err := s.Encode(numbers)
+			generatedID, err := s.Encode(numbers...)
 			if err != nil {
 				t.Fatal(err)
 			}

@@ -20,7 +20,7 @@ func BenchmarkEncodeDecode(b *testing.B) {
 	}
 
 	for i := 0; i < b.N; i++ {
-		id, err := s.Encode(numbers)
+		id, err := s.Encode(numbers...)
 		if err != nil {
 			b.Fatal(err)
 		}
@@ -41,7 +41,7 @@ func TestEncodingSimple(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	generatedID, err := s.Encode(numbers)
+	generatedID, err := s.Encode(numbers...)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -64,7 +64,7 @@ func TestEncodingDifferentInputs(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	id, err := s.Encode(numbers)
+	id, err := s.Encode(numbers...)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -95,7 +95,7 @@ func TestEncodingIncrementalNumbers(t *testing.T) {
 	}
 
 	for id, numbers := range ids {
-		generatedID, err := s.Encode(numbers)
+		generatedID, err := s.Encode(numbers...)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -131,7 +131,7 @@ func TestEncodingIncrementalNumbersSameIndex0(t *testing.T) {
 	}
 
 	for id, numbers := range ids {
-		generatedID, err := s.Encode(numbers)
+		generatedID, err := s.Encode(numbers...)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -167,7 +167,7 @@ func TestEncodingIncrementalNumbersSameIndex1(t *testing.T) {
 	}
 
 	for id, numbers := range ids {
-		generatedID, err := s.Encode(numbers)
+		generatedID, err := s.Encode(numbers...)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -196,7 +196,7 @@ func TestEncodingMultiInput(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	id, err := s.Encode(numbers)
+	id, err := s.Encode(numbers...)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -213,7 +213,7 @@ func TestEncodingEmptySlice(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	id, err := s.Encode([]uint64{})
+	id, err := s.Encode()
 	if err != nil {
 		t.Fatal(err)
 	}

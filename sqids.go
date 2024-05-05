@@ -29,6 +29,30 @@ type Options struct {
 	Blocklist []string
 }
 
+// Option is a function that sets an option on a custom instance of Sqids
+type Option func(*Options)
+
+// WithAlphabet sets the alphabet for a custom instance of Sqids
+func WithAlphabet(alphabet string) func(*Options) {
+	return func(o *Options) {
+		o.Alphabet = alphabet
+	}
+}
+
+// WithMinLength sets the minimum length for a custom instance of Sqids
+func WithMinLength(minLength uint8) func(*Options) {
+	return func(o *Options) {
+		o.MinLength = minLength
+	}
+}
+
+// WithBlocklist sets the blocklist for a custom instance of Sqids
+func WithBlocklist(blocklist []string) func(*Options) {
+	return func(o *Options) {
+		o.Blocklist = blocklist
+	}
+}
+
 // Sqids lets you generate unique IDs from numbers
 type Sqids struct {
 	alphabet  string
@@ -37,16 +61,18 @@ type Sqids struct {
 }
 
 // New constructs an instance of Sqids
-func New(options ...Options) (*Sqids, error) {
-	if len(options) == 0 {
-		options = append(options, Options{
-			Alphabet:  defaultAlphabet,
-			Blocklist: defaultBlocklist,
-		})
+func New(opts ...Option) (*Sqids, error) {
+	options := Options{
+		Alphabet:  defaultAlphabet,
+		Blocklist: defaultBlocklist,
+	}
+
+	for _, opt := range opts {
+		opt(&options)
 	}
 
 	// Validate the first given options value, or the default options if none were given.
-	o, err := validatedOptions(options[0])
+	o, err := validatedOptions(options)
 	if err != nil {
 		return nil, err
 	}
@@ -84,7 +110,7 @@ func validatedOptions(o Options) (Options, error) {
 }
 
 // Encode a slice of uint64 values into an ID string
-func (s *Sqids) Encode(numbers []uint64) (string, error) {
+func (s *Sqids) Encode(numbers ...uint64) (string, error) {
 	// if no numbers passed, return an empty string
 	if len(numbers) == 0 {
 		return "", nil
@@ -188,6 +214,22 @@ func (s *Sqids) Decode(id string) []uint64 {
 	}
 
 	return ret
+}
+
+// IsValid checks if an ID string is valid for a given set of numbers
+func (s *Sqids) IsValid(id string, numbers ...uint64) bool {
+	encoded, _ := s.Encode(numbers...)
+
+	return id == encoded
+}
+
+// DecodeOne decodes a single number from an ID string
+func (s *Sqids) DecodeOne(id string) (uint64, bool) {
+	numbers := s.Decode(id)
+	if len(numbers) > 0 {
+		return numbers[0], true
+	}
+	return 0, false
 }
 
 func alphabetOffset(alphabet string, offset int) []rune {

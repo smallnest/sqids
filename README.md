@@ -1,9 +1,15 @@
-# [Sqids Go](https://sqids.org/go)
+# Squids Go
 
-[![GoDoc](https://godoc.org/github.com/sqids/sqids-go?status.svg)](https://godoc.org/github.com/sqids/sqids-go)
-[![Github Actions](https://img.shields.io/github/actions/workflow/status/sqids/sqids-go/tests.yml)](https://github.com/sqids/sqids-go/actions)
+[![Go Report Card](https://goreportcard.com/badge/github.com/smallnest/sqids)](https://goreportcard.com/report/github.com/smallnest/sqids)
+[![GoDoc](https://godoc.org/github.com/smallnest/sqids?status.svg)](https://godoc.org/github.com/smallnest/sqids)
+[![Github Actions](https://img.shields.io/github/actions/workflow/status/smallnest/sqids/tests.yml)](https://github.com/smallnest/sqids/actions)
 
 [Sqids](https://sqids.org/go) (*pronounced "squids"*) is a small library that lets you **generate unique IDs from numbers**. It's good for link shortening, fast & URL-safe ID generation and decoding back into numbers for quicker database lookups.
+
+Fork from [sqids-go](https://github.com/sqids/sqids-go) and refactor:
+- refactor `New` to use function options pattern
+- refactor `Encode` to use variadic arguments
+- add `DecodeOne` to decode one id to one number
 
 Features:
 

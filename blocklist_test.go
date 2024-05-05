@@ -35,7 +35,7 @@ func TestBlocklistDefault(t *testing.T) {
 		t.Errorf("Decoding `%v` should produce `%v`, but instead produced `%v`", blockedID, numbers, decodedNumbers)
 	}
 
-	generatedID, err := s.Encode(numbers)
+	generatedID, err := s.Encode(numbers...)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -48,9 +48,7 @@ func TestBlocklistEmpty(t *testing.T) {
 	numbers := []uint64{4572721}
 	id := "aho1e"
 
-	s, err := New(Options{
-		Blocklist: []string{},
-	})
+	s, err := New(WithBlocklist([]string{}))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -60,7 +58,7 @@ func TestBlocklistEmpty(t *testing.T) {
 		t.Errorf("Decoding `%v` should produce `%v`, but instead produced `%v`", id, numbers, decodedNumbers)
 	}
 
-	generatedID, err := s.Encode(numbers)
+	generatedID, err := s.Encode(numbers...)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -73,11 +71,7 @@ func TestBlocklistNonEmpty(t *testing.T) {
 	numbers := []uint64{4572721}
 	id := "aho1e"
 
-	s, err := New(Options{
-		Blocklist: []string{
-			"ArUO", // originally encoded [100000]
-		},
-	})
+	s, err := New(WithBlocklist([]string{"ArUO"}))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -88,7 +82,7 @@ func TestBlocklistNonEmpty(t *testing.T) {
 		t.Errorf("Decoding `%v` should produce `%v`, but instead produced `%v`", id, numbers, decodedNumbers)
 	}
 
-	generatedID, err := s.Encode(numbers)
+	generatedID, err := s.Encode(numbers...)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -103,7 +97,7 @@ func TestBlocklistNonEmpty(t *testing.T) {
 		t.Errorf("Decoding `%v` should produce `%v`, but instead produced `%v`", id, []uint64{100_000}, decodedNumbers)
 	}
 
-	generatedID, err = s.Encode([]uint64{100_000})
+	generatedID, err = s.Encode(100_000)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -122,20 +116,19 @@ func TestNewBlocklist(t *testing.T) {
 	numbers := []uint64{1000000, 2000000}
 	id := "1aYeB7bRUt"
 
-	s, err := New(Options{
-		Blocklist: []string{
-			"JSwXFaosAN", // normal result of 1st encoding, let's block that word on purpose
-			"OCjV9JK64o", // result of 2nd encoding
-			"rBHf",       // result of 3rd encoding is `4rBHfOiqd3`, let's block a substring
-			"79SM",       // result of 4th encoding is `dyhgw479SM`, let's block the postfix
-			"7tE6",       // result of 4th encoding is `7tE6jdAHLe`, let's block the prefix
-		},
-	})
+	s, err := New(WithBlocklist([]string{
+		"JSwXFaosAN", // normal result of 1st encoding, let's block that word on purpose
+		"OCjV9JK64o", // result of 2nd encoding
+		"rBHf",       // result of 3rd encoding is `4rBHfOiqd3`, let's block a substring
+		"79SM",       // result of 4th encoding is `dyhgw479SM`, let's block the postfix
+		"7tE6",       // result of 4th encoding is `7tE6jdAHLe`, let's block the prefix
+	}))
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	generatedID, err := s.Encode(numbers)
+	generatedID, err := s.Encode(numbers...)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -154,9 +147,7 @@ func TestDecodingBlocklistedIDs(t *testing.T) {
 	numbers := []uint64{1, 2, 3}
 	blocklist := []string{"86Rf07", "se8ojk", "ARsz1p", "Q8AI49", "5sQRZO"}
 
-	s, err := New(Options{
-		Blocklist: blocklist,
-	})
+	s, err := New(WithBlocklist(blocklist))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -172,15 +163,13 @@ func TestDecodingBlocklistedIDs(t *testing.T) {
 func TestShortBlocklistMatch(t *testing.T) {
 	numbers := []uint64{1_000}
 
-	s, err := New(Options{
-		Blocklist: []string{"pnd"},
-	})
+	s, err := New(WithBlocklist([]string{"pnd"}))
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	generatedID, err := s.Encode(numbers)
+	generatedID, err := s.Encode(numbers...)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -195,15 +184,12 @@ func TestUpperCaseAlphabetBlocklistFiltering(t *testing.T) {
 	numbers := []uint64{1, 2, 3}
 	id := "IBSHOZ"
 
-	s, err := New(Options{
-		Alphabet:  "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-		Blocklist: []string{"sxnzkl"}, // lowercase blocklist in only-uppercase alphabet
-	})
+	s, err := New(WithAlphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ"), WithBlocklist([]string{"sxnzkl"}))
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	generatedID, err := s.Encode(numbers)
+	generatedID, err := s.Encode(numbers...)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -225,11 +211,7 @@ func TestMaxEncodingAttempts(t *testing.T) {
 	minLength := uint8(3)
 	blocklist := []string{"cab", "abc", "bca"}
 
-	s, err := New(Options{
-		Alphabet:  alphabet,
-		MinLength: minLength,
-		Blocklist: blocklist,
-	})
+	s, err := New(WithAlphabet(alphabet), WithMinLength(minLength), WithBlocklist(blocklist))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -238,7 +220,7 @@ func TestMaxEncodingAttempts(t *testing.T) {
 		t.Errorf("`TestMaxEncodingAttempts` is not setup properly")
 	}
 
-	if _, err := s.Encode([]uint64{0}); err == nil {
+	if _, err := s.Encode(0); err == nil {
 		t.Errorf("Should throw error about max regeneration attempts")
 	}
 }

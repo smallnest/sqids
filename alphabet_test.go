@@ -6,9 +6,7 @@ import (
 )
 
 func TestMultibyteAlphabet(t *testing.T) {
-	_, err := New(Options{
-		Alphabet: "ë1092",
-	})
+	_, err := New(WithAlphabet("ë1092"))
 
 	if err != errAlphabetMultibyte {
 		t.Fatalf("unexpected error: %v", err)
@@ -20,14 +18,12 @@ func TestAlphabetSimple(t *testing.T) {
 	id := "489158"
 
 	alphabet := "0123456789abcdef"
-	s, err := New(Options{
-		Alphabet: alphabet,
-	})
+	s, err := New(WithAlphabet(alphabet))
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	generatedID, err := s.Encode(numbers)
+	generatedID, err := s.Encode(numbers...)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -43,16 +39,14 @@ func TestAlphabetSimple(t *testing.T) {
 }
 
 func TestAlphabetShort(t *testing.T) {
-	s, err := New(Options{
-		Alphabet: "abc",
-	})
+	s, err := New(WithAlphabet("abc"))
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	numbers := []uint64{1, 2, 3}
 
-	generatedID, err := s.Encode(numbers)
+	generatedID, err := s.Encode(numbers...)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -64,16 +58,15 @@ func TestAlphabetShort(t *testing.T) {
 }
 
 func TestAlphabetLong(t *testing.T) {
-	s, err := New(Options{
-		Alphabet: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_+|{}[];:'\"/?.>,<`~",
-	})
+	s, err := New(WithAlphabet("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_+|{}[];:'\"/?.>,<`~"))
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	numbers := []uint64{1, 2, 3}
 
-	generatedID, err := s.Encode(numbers)
+	generatedID, err := s.Encode(numbers...)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -85,17 +78,13 @@ func TestAlphabetLong(t *testing.T) {
 }
 
 func TestRepeatingAlphabetCharacters(t *testing.T) {
-	if _, err := New(Options{
-		Alphabet: "aabcdefg",
-	}); err == nil {
+	if _, err := New(WithAlphabet("aabcdefg")); err == nil {
 		t.Errorf("Should not accept alphabet with repeating characters")
 	}
 }
 
 func TestTooShortOfAnAlphabet(t *testing.T) {
-	if _, err := New(Options{
-		Alphabet: "ab",
-	}); err == nil {
+	if _, err := New(WithAlphabet("ab")); err == nil {
 		t.Errorf("Should not accept too short of an alphabet")
 	}
 }
